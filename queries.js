@@ -1,15 +1,20 @@
 'use strict';
 
 let promise = require('bluebird');
-
 let options = {
     // intialization options
     promiseLib: promise,
 };
 
 let pgp = require('pg-promise')(options);
-let connectionString = 'postgres://postgres:localhost:5432/jaia';
-let db = pgp(connectionString);
+// let connectionString = 'postgres://postgres:localhost:5432/jaia';
+let db = pgp({
+    host: 'localhost',
+    port: 5432,
+    database: 'jaia',
+    user: 'postgres',
+    password: 'Postgres',
+});
 
 // add query functions
 /**
@@ -63,7 +68,8 @@ function getSingleItem(req, res, next) {
  */
 function createItem(req, res, next) {
     db.none('insert into items(name, make, model, serial_number, description)' +
-    'values(${name}, ${breed}, ${age}, ${sex})', req.body)
+    'values(${name}, ${make}, ${model}, ${serial_number}, ${description})'
+    , req.body)
         .then(function() {
             res.status(200)
                 .json({
@@ -84,10 +90,12 @@ function createItem(req, res, next) {
  */
 function updateItem(req, res, next) {
     db.none('update items set name=$1, make=$2, model=$3, ' +
-    'serial_number=$4, description=$5',
+    'serial_number=$4, description=$5 WHERE id=$6',
     [req.body.name, req.body.make, req.body.model, req.body.serial_number,
     req.body.description, parseInt(req.params.id)])
         .then(function() {
+            console.log(req.body);
+            console.log(parseInt(req.params.id));
             res.status(200)
                 .json({
                     status: 'success',
@@ -120,7 +128,7 @@ function removeItem(req, res, next) {
         });
 }
 
-module.export = {
+module.exports = {
     getAllItems: getAllItems,
     getSingleItem: getSingleItem,
     createItem: createItem,

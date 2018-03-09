@@ -94,8 +94,6 @@ function updateItem(req, res, next) {
     [req.body.name, req.body.make, req.body.model, req.body.serial_number,
     req.body.description, parseInt(req.params.id)])
         .then(function() {
-            console.log(req.body);
-            console.log(parseInt(req.params.id));
             res.status(200)
                 .json({
                     status: 'success',

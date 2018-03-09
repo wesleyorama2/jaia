@@ -36,7 +36,6 @@ app.use(function(req, res, next) {
 
 // development error handler
 // will print stacktrace
-app.use(function(err, req, res, next) {
   if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
       res.status( err.code || 500 )
@@ -55,6 +54,9 @@ app.use(function(err, req, res, next) {
         message: err.message,
       });
     });
-  }
+  };
+
+app.use((err, req, res, next) => {
+res.status(400).send(err);
 });
 module.exports = app;
